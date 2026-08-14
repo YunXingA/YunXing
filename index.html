@@ -15,10 +15,11 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
             overflow: hidden;
+            padding-top: 15vh;
         }
 
         /* 星空背景粒子 */
@@ -57,7 +58,7 @@
         .hello {
             font-size: clamp(2.5rem, 8vw, 5rem);
             font-weight: 800;
-            background: linear-gradient(90deg, #f093fb, #f5576c, #fda085, #f093fb);
+            background: linear-gradient(90deg, #4ade80, #e5e7eb, #7ec8e3, #4ade80);
             background-size: 300% 100%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -75,7 +76,7 @@
         .divider {
             width: 80px;
             height: 4px;
-            background: linear-gradient(90deg, #f093fb, #f5576c);
+            background: linear-gradient(90deg, #4ade80, #7ec8e3);
             margin: 24px auto;
             border-radius: 2px;
             animation: expand 2s ease-in-out infinite alternate;
@@ -95,7 +96,7 @@
         }
 
         .intro .name {
-            color: #f5576c;
+            color: #7ec8e3;
             font-weight: 700;
             position: relative;
             display: inline-block;
@@ -108,7 +109,7 @@
             left: 0;
             width: 100%;
             height: 2px;
-            background: #f5576c;
+            background: #7ec8e3;
             transform: scaleX(0);
             animation: underlineGrow 1.5s ease 1.5s forwards;
             transform-origin: left;
@@ -128,7 +129,7 @@
             display: inline-block;
             width: 3px;
             height: 1.2em;
-            background: #f5576c;
+            background: #7ec8e3;
             margin-left: 4px;
             vertical-align: middle;
             animation: blink 1s step-end infinite;
@@ -139,15 +140,42 @@
             51%, 100% { opacity: 0; }
         }
 
-        /* 底部装饰 */
+        /* 底部页脚 - 透明度10%~60%渐变 + 15%模糊 */
         .footer {
             position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 0.85rem;
-            letter-spacing: 1px;
+            bottom: 12px;
+            right: 16px;
+            left: auto;
+            transform: none;
+            font-size: 0.6rem;
+            letter-spacing: 0.5px;
+            z-index: 10;
+            background: linear-gradient(90deg, rgba(74,222,128,0.1), rgba(229,231,235,0.35), rgba(126,200,227,0.6), rgba(74,222,128,0.1));
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease infinite, footerFade 3s ease-in-out infinite alternate;
+            filter: blur(0.15px);
+        }
+
+        @keyframes footerFade {
+            0% { opacity: 0.1; }
+            100% { opacity: 0.6; }
+        }
+
+        .footer a {
+            background: linear-gradient(90deg, rgba(74,222,128,0.1), rgba(229,231,235,0.35), rgba(126,200,227,0.6), rgba(74,222,128,0.1));
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease infinite;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
         }
 
         /* 漂浮动画 */
@@ -159,23 +187,154 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
+
+        /* ===== 新增装饰 ===== */
+
+        /* 装饰圆环 */
+        .deco-ring {
+            position: fixed;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .deco-ring.r1 {
+            width: 300px;
+            height: 300px;
+            top: -80px;
+            left: -80px;
+            animation: slowSpin 20s linear infinite;
+        }
+
+        .deco-ring.r2 {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -120px;
+            animation: slowSpin 35s linear infinite reverse;
+        }
+
+        .deco-ring.r3 {
+            width: 200px;
+            height: 200px;
+            bottom: 60px;
+            left: 8%;
+            animation: slowSpin 15s linear infinite;
+        }
+
+        @keyframes slowSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 装饰小点阵 */
+        .deco-dots {
+            position: fixed;
+            bottom: 22vh;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 0;
+            opacity: 0.35;
+        }
+
+        .deco-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4ade80, #7ec8e3);
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        .deco-dots span:nth-child(2) { animation-delay: 0.3s; }
+        .deco-dots span:nth-child(3) { animation-delay: 0.6s; }
+        .deco-dots span:nth-child(4) { animation-delay: 0.9s; }
+        .deco-dots span:nth-child(5) { animation-delay: 1.2s; }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.6); opacity: 1; }
+        }
+
+        /* 渐变装饰竖线 - 颜色渐变 + 透明度渐变 */
+        .deco-line {
+            position: fixed;
+            width: 1px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .deco-line.l1 {
+            left: 15%; top: 0; height: 40vh;
+            background: linear-gradient(to bottom, rgba(74,222,128,0), rgba(74,222,128,0.15) 30%, rgba(229,231,235,0.3) 60%, rgba(126,200,227,0.1) 85%, rgba(126,200,227,0));
+        }
+
+        .deco-line.l2 {
+            right: 18%; top: 30vh; height: 35vh;
+            background: linear-gradient(to bottom, rgba(126,200,227,0), rgba(126,200,227,0.2) 40%, rgba(74,222,128,0.25) 70%, rgba(74,222,128,0));
+        }
+
+        .deco-line.l3 {
+            left: 50%; bottom: 0; height: 25vh;
+            background: linear-gradient(to top, rgba(229,231,235,0), rgba(229,231,235,0.12) 40%, rgba(126,200,227,0.2) 75%, rgba(74,222,128,0));
+        }
+
+        /* 鼠标跟随光晕 */
+        .glow {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(126, 200, 227, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+        }
     </style>
 </head>
 <body>
 
-    <!-- 星空背景 -->
+    <!-- 星空 -->
     <div class="stars" id="stars"></div>
+
+    <!-- 装饰圆环 -->
+    <div class="deco-ring r1"></div>
+    <div class="deco-ring r2"></div>
+    <div class="deco-ring r3"></div>
+
+    <!-- 装饰竖线 -->
+    <div class="deco-line l1"></div>
+    <div class="deco-line l2"></div>
+    <div class="deco-line l3"></div>
+
+    <!-- 鼠标光晕 -->
+    <div class="glow" id="glow"></div>
 
     <!-- 主内容 -->
     <div class="container float">
-        <div class="hello">Hello World</div>
+        <h1 class="hello">Hello World</h1>
         <div class="divider"></div>
-        <div class="intro">
+        <p class="intro">
             I'm <span class="name">YunXing</span><span class="cursor"></span>
-        </div>
+        </p>
     </div>
 
-    <div class="footer">Powered by GitHub Pages</div>
+    <!-- 中间下方装饰点阵 -->
+    <div class="deco-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- 底部右下角渐变小字 -->
+    <div class="footer">
+        VATE & Powered by <a href="https://pages.github.com">GitHub Pages</a>
+    </div>
 
     <script>
         // 生成随机星星
@@ -189,12 +348,21 @@
             star.style.top = Math.random() * 100 + '%';
             star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
             star.style.animationDelay = Math.random() * 5 + 's';
-            const size = Math.random() * 3 + 1;
-            star.style.width = size + 'px';
-            star.style.height = size + 'px';
             starsContainer.appendChild(star);
         }
-    </script>
 
+        // 鼠标跟随光晕
+        const glow = document.getElementById('glow');
+        document.addEventListener('mousemove', (e) => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        });
+        document.addEventListener('mouseleave', () => {
+            glow.style.opacity = '0';
+        });
+        document.addEventListener('mouseenter', () => {
+            glow.style.opacity = '1';
+        });
+    </script>
 </body>
 </html>
