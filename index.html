@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YunXing 的个人主页</title>
+    <title>YunXing/陨篂的个人主页</title>
     <style>
         * {
             margin: 0;
@@ -22,7 +22,6 @@
             padding-top: 15vh;
         }
 
-        /* 星空背景粒子 */
         .stars {
             position: fixed;
             top: 0;
@@ -47,14 +46,12 @@
             50% { opacity: 1; transform: scale(1.2); }
         }
 
-        /* 主容器 */
         .container {
             text-align: center;
             z-index: 1;
             padding: 40px;
         }
 
-        /* Hello World 标题 */
         .hello {
             font-size: clamp(2.5rem, 8vw, 5rem);
             font-weight: 800;
@@ -72,7 +69,6 @@
             50% { background-position: 100% 50%; }
         }
 
-        /* 分隔线 */
         .divider {
             width: 80px;
             height: 4px;
@@ -87,7 +83,6 @@
             100% { width: 120px; opacity: 1; }
         }
 
-        /* 自我介绍 */
         .intro {
             font-size: clamp(1.2rem, 4vw, 1.8rem);
             color: rgba(255, 255, 255, 0.85);
@@ -124,7 +119,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 打字光标 */
         .cursor {
             display: inline-block;
             width: 3px;
@@ -140,7 +134,6 @@
             51%, 100% { opacity: 0; }
         }
 
-        /* 底部页脚 - 透明度10%~60%渐变 + 15%模糊 */
         .footer {
             position: fixed;
             bottom: 12px;
@@ -178,7 +171,6 @@
             text-decoration: underline;
         }
 
-        /* 漂浮动画 */
         .float {
             animation: float 6s ease-in-out infinite;
         }
@@ -188,9 +180,6 @@
             50% { transform: translateY(-10px); }
         }
 
-        /* ===== 新增装饰 ===== */
-
-        /* 装饰圆环 */
         .deco-ring {
             position: fixed;
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -228,7 +217,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* 装饰小点阵 */
         .deco-dots {
             position: fixed;
             bottom: 22vh;
@@ -258,7 +246,6 @@
             50% { transform: scale(1.6); opacity: 1; }
         }
 
-        /* 渐变装饰竖线 - 颜色渐变 + 透明度渐变 */
         .deco-line {
             position: fixed;
             width: 1px;
@@ -281,7 +268,6 @@
             background: linear-gradient(to top, rgba(229,231,235,0), rgba(229,231,235,0.12) 40%, rgba(126,200,227,0.2) 75%, rgba(74,222,128,0));
         }
 
-        /* 鼠标跟随光晕 */
         .glow {
             position: fixed;
             width: 200px;
@@ -293,27 +279,112 @@
             transform: translate(-50%, -50%);
             transition: opacity 0.3s;
         }
+
+        /* ===== 游戏入口按钮 ===== */
+        .game-btn-wrapper {
+            position: fixed;
+            bottom: 30vh;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .game-btn {
+            position: relative;
+            display: inline-block;
+            padding: 14px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border-radius: 50px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.2), 
+                        0 0 30px rgba(126, 200, 227, 0.2);
+            /* 用flex居中内容 */
+            text-align: center;
+        }
+
+        .game-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50px;
+            padding: 2px;
+            background: linear-gradient(90deg, #4ade80, #7ec8e3, #4ade80);
+            background-size: 200% auto;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: gradientShift 3s linear infinite;
+        }
+
+        .game-btn span {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(90deg, #4ade80, #7ec8e3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .game-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 0 25px rgba(74, 222, 128, 0.4), 
+                        0 0 45px rgba(126, 200, 227, 0.4);
+        }
+
+        .game-btn:active {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+        }
+
+        .game-btn-glow {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            animation: btnGlow 4s infinite;
+            z-index: 1;
+        }
+
+        @keyframes btnGlow {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        @media (max-width: 768px) {
+            .game-btn-wrapper {
+                bottom: 28vh;
+            }
+            .game-btn {
+                padding: 12px 32px;
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 星空 -->
     <div class="stars" id="stars"></div>
 
-    <!-- 装饰圆环 -->
     <div class="deco-ring r1"></div>
     <div class="deco-ring r2"></div>
     <div class="deco-ring r3"></div>
 
-    <!-- 装饰竖线 -->
     <div class="deco-line l1"></div>
     <div class="deco-line l2"></div>
     <div class="deco-line l3"></div>
 
-    <!-- 鼠标光晕 -->
     <div class="glow" id="glow"></div>
 
-    <!-- 主内容 -->
     <div class="container float">
         <h1 class="hello">Hello World</h1>
         <div class="divider"></div>
@@ -322,7 +393,14 @@
         </p>
     </div>
 
-    <!-- 中间下方装饰点阵 -->
+    <!-- 游戏按钮 -->
+    <div class="game-btn-wrapper">
+        <a href="https://yunxinga.github.io/YunXing/shooting_Game/shooting_Game.html" class="game-btn" target="_blank">
+            <div class="game-btn-glow"></div>
+            <span>🎮 进入射击游戏</span>
+        </a>
+    </div>
+
     <div class="deco-dots">
         <span></span>
         <span></span>
@@ -331,13 +409,11 @@
         <span></span>
     </div>
 
-    <!-- 底部右下角渐变小字 -->
     <div class="footer">
         VATE & Powered by <a href="https://pages.github.com">GitHub Pages</a>
     </div>
 
     <script>
-        // 生成随机星星
         const starsContainer = document.getElementById('stars');
         const starCount = 80;
 
@@ -351,7 +427,6 @@
             starsContainer.appendChild(star);
         }
 
-        // 鼠标跟随光晕
         const glow = document.getElementById('glow');
         document.addEventListener('mousemove', (e) => {
             glow.style.left = e.clientX + 'px';
