@@ -1,407 +1,358 @@
-/* ============================================================
-   VATE // 陨篂 YunXing 个人网址
-   风格：黑金 · 巨神科幻 · PC级浏览器对象
-   ============================================================ */
-
-/* ============ 全局重置 ============ */
+/* ============ 全局 ============ */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --red:        #c0392b;      /* 主红 */
-  --red-soft:   #e57373;      /* 淡红 */
-  --red-glow:   rgba(229,115,115,0.55);
-  --gold:       #c9a227;      /* 金 */
-  --gold-light: #e8c96a;
-  --gold-soft:  rgba(201,162,39,0.35);
-  --bg-deep:    #050505;
-  --bg-panel:   #0c0c0c;
-  --text:       #e8ddc4;
-  --text-dim:   rgba(232,221,196,0.55);
-  /* 沿用旧版 //SDF 青色作为搜索图标/点缀色 */
-  --cyan:       #00ffc8;
+  --gold: #c8a24a;
+  --gold-light: #e8cd82;
+  --red: #c0392b;
+  --red-soft: rgba(192, 57, 43, 0.55);
+  --cyan: #00ffc8;
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
+html, body { height: 100%; }
 
 body {
-  font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
-  background: var(--bg-deep);
-  color: var(--text);
-  /* PC 固定视口，移动端强制按设备宽度但渲染 PC 布局 */
-  min-width: 1024px;
-}
-
-/* ============ 主应用容器（PC 全屏） ============ */
-.app {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  /* 黑金渐变背景（色差柔和） */
-  background:
-    radial-gradient(ellipse at 20% 0%, rgba(40,28,10,0.55) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 100%, rgba(60,42,14,0.45) 0%, transparent 60%),
-    linear-gradient(160deg, #0a0a0a 0%, #050505 100%);
-}
-
-/* ============================================================
-   顶部黑色标题框
-   ============================================================ */
-.top-bar {
-  position: relative;
-  flex: 0 0 auto;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  background: linear-gradient(90deg, #0a0a0a 0%, #141414 50%, #0a0a0a 100%);
-  border-bottom: 1px solid rgba(229,115,115,0.28);
-  box-shadow: 0 2px 24px rgba(0,0,0,0.6);
-  z-index: 20;
+  background: #050505;
+  background-image:
+    radial-gradient(1200px 600px at 30% 20%, rgba(60, 40, 15, 0.35), transparent 60%),
+    radial-gradient(900px 700px at 80% 90%, rgba(30, 22, 8, 0.4), transparent 55%),
+    linear-gradient(160deg, #0a0a0a 0%, #050505 55%, #100c06 100%);
+  font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+  color: #e8d9b0;
   overflow: hidden;
 }
 
-/* 顶部黑色与下方微妙的色差感 */
-.top-bar::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--red-glow), transparent);
-}
-
-/* 左上角淡红斜梯形背景 */
-.top-red-wedge {
-  position: absolute;
-  top: 0; left: 0;
-  width: 220px; height: 100%;
-  background: linear-gradient(135deg, rgba(229,115,115,0.16) 0%, rgba(229,115,115,0.05) 60%, transparent 100%);
-  clip-path: polygon(0 0, 100% 0, 70% 100%, 0 100%);
-  pointer-events: none;
-}
-
-/* ============ 角标（红色，四角） ============ */
-.corner {
-  position: absolute;
-  width: 12px; height: 12px;
-  border: 2px solid var(--red);
-  pointer-events: none;
-}
-.corner-tl { top: 6px;    left: 6px;    border-right: none; border-bottom: none; }
-.corner-tr { top: 6px;    right: 6px;   border-left: none;  border-bottom: none; }
-.corner-bl { bottom: 6px; left: 6px;    border-right: none; border-top: none; }
-.corner-br { bottom: 6px; right: 6px;   border-left: none;  border-top: none; }
-
-/* ============ 左侧品牌 VATE ============ */
-.top-left {
-  position: relative;
+/* ============ 顶部信息栏（始终显示，整体不变渐变） ============ */
+.topbar {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 12px;
-  z-index: 2;
+  gap: 24px;
+  padding: 12px 28px;
+  background: #080808;
+  border-bottom: 1px solid rgba(200, 162, 74, 0.25);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+  position: relative;
+  z-index: 10;
 }
 
-.brand {
+.topbar-left {
   display: flex;
-  flex-direction: column;
-  line-height: 1.1;
+  align-items: baseline;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
-.brand-name {
-  font-size: 24px;
+.vate {
+  font-size: 19px;
   font-weight: 700;
-  letter-spacing: 6px;   /* 与 ATLAS 差不多大小间距 */
-  color: #fff;
-  text-shadow: 0 0 12px rgba(229,115,115,0.5);
+  letter-spacing: 6px;
+  color: #e8cd82;
+  text-shadow: 0 0 12px rgba(200, 162, 74, 0.4);
 }
 
-.brand-sub {
-  font-size: 10px;
+.sub {
+  font-size: 12px;
   letter-spacing: 2px;
   color: var(--red-soft);
-  /* 淡红渐变文字 */
-  background: linear-gradient(90deg, var(--red-soft), #f0a0a0);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
 }
 
-/* ============ 中间搜索框 ============ */
-.search-box {
+/* 搜索框（只有框内有渐变，上侧区域整体不变） */
+.search {
   position: relative;
+  flex: 0 1 360px;
+  margin-left: auto;
   display: flex;
   align-items: center;
-  width: 340px;
-  height: 38px;
-  padding: 0 14px 0 40px;
-  background: rgba(10,10,10,0.85);
-  border: 1px solid rgba(229,115,115,0.3);
-  border-radius: 2px;
-  z-index: 2;
+  background: rgba(10, 10, 10, 0.9);
+  border: 1px solid rgba(192, 57, 43, 0.4);
+  border-radius: 4px;
+  overflow: hidden;
+  height: 36px;
 }
 
-.search-icon {
+.search::before {
+  content: "";
   position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--cyan);   /* 放大镜颜色沿用 //SDF 青色不变 */
-  cursor: pointer;
-  display: flex;
-  z-index: 3;
-  transition: opacity .15s;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(192, 57, 43, 0.0) 35%,
+    rgba(192, 57, 43, 0.20) 50%,
+    rgba(192, 57, 43, 0.0) 65%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  animation: shimmer 4s ease-in-out infinite;
+  pointer-events: none;
 }
-.search-icon:hover { opacity: .8; }
 
-.search-input {
-  width: 100%;
+@keyframes shimmer {
+  0%   { background-position: 220% 0; }
+  60%  { background-position: -120% 0; }
+  100% { background-position: -120% 0; }
+}
+
+#searchInput {
+  flex: 1;
   height: 100%;
+  padding: 0 12px;
   border: none;
   outline: none;
   background: transparent;
-  color: #fff;           /* 输入内容白色 */
+  color: #ffffff;
   font-size: 14px;
   letter-spacing: 1px;
-  font-family: inherit;
-}
-.search-input::placeholder { color: rgba(255,255,255,0.35); }
-
-/* 搜索框内高光闪动（淡红色，保留） */
-.search-shine {
-  position: absolute;
-  top: 0; bottom: 0;
-  left: -40%;
-  width: 40%;
-  background: linear-gradient(100deg, transparent, rgba(229,115,115,0.35), transparent);
-  transform: skewX(-18deg);
-  animation: searchShine 3.2s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes searchShine {
-  0%, 60% { left: -40%; }
-  100%   { left: 120%; }
 }
 
-/* ============ 右侧标题 + 状态 ============ */
-.top-right {
-  position: relative;
+#searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+#searchBtn {
+  width: 40px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 16px;
-  z-index: 2;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.site-title {
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+/* 日期：墨绿色，精确到分 */
+.date {
   font-size: 13px;
   letter-spacing: 1px;
-  color: var(--text-dim);
+  color: #1e6b4f;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .status {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11px;
+  gap: 7px;
+  font-size: 12px;
   letter-spacing: 2px;
 }
 
-/* online 浅红色（与闪烁点同色） */
-.status-dot {
-  width: 7px; height: 7px;
+.status .dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--red-soft);
-  box-shadow: 0 0 8px var(--red-glow);
+  background: #e57373;
+  box-shadow: 0 0 8px #e57373;
   animation: pulse 1.6s infinite;
 }
-.status-text { color: var(--red-soft); }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
 
-/* ============================================================
-   主体内容区
-   ============================================================ */
-.content {
-  position: relative;
+.status .ok {
+  color: #e57373;
+  font-weight: 600;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ============ 下方显示区（动画在此播放） ============ */
+.stage {
   flex: 1 1 auto;
-  margin: 18px;
-  border: 1px solid rgba(201,162,39,0.25);
-  background:
-    linear-gradient(135deg, rgba(20,16,8,0.5), rgba(8,8,8,0.5));
+  position: relative;
   overflow: hidden;
+  background:
+    radial-gradient(1000px 600px at 20% 80%, rgba(45, 32, 12, 0.25), transparent 60%),
+    linear-gradient(155deg, #0c0c0c 0%, #060606 60%, #0e0a05 100%);
 }
 
-/* 动态黑金渐变抛光层 */
-.gold-polish {
+/* 底部动态抛光带 */
+.stage::after {
+  content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg,
+  left: -30%;
+  bottom: 0;
+  width: 160%;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
     transparent 0%,
-    rgba(201,162,39,0.06) 35%,
-    rgba(232,201,106,0.12) 50%,
-    rgba(201,162,39,0.06) 65%,
-    transparent 100%);
-  background-size: 220% 100%;
-  animation: polish 7s ease-in-out infinite;
+    rgba(200, 162, 74, 0.0) 35%,
+    rgba(200, 162, 74, 0.55) 50%,
+    rgba(200, 162, 74, 0.0) 65%,
+    transparent 100%
+  );
+  animation: polish 7s linear infinite;
   pointer-events: none;
 }
+
 @keyframes polish {
-  0%, 100% { background-position: 0% 50%; }
-  50%      { background-position: 100% 50%; }
+  0%   { transform: translateX(-25%); }
+  100% { transform: translateX(25%); }
 }
 
-.content-inner {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  text-align: center;
-}
-
-.content-inner .label {
-  font-size: 12px;
-  letter-spacing: 6px;
-  color: var(--gold);
-}
-
-.content-inner .title {
-  font-size: 34px;
-  font-weight: 700;
-  letter-spacing: 4px;
-  background: linear-gradient(90deg, #e8c96a, #c9a227, #e8c96a);
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: titleShine 5s ease-in-out infinite;
-}
-@keyframes titleShine { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-
-.content-inner .subtitle {
-  font-size: 13px;
-  letter-spacing: 3px;
-  color: var(--text-dim);
-}
-
-/* ============================================================
-   开场动画层（覆盖整屏）
-   ============================================================ */
-.intro-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  pointer-events: none;
-  background: var(--bg-deep);
-}
-
-/* 中心 Logo */
-.intro-logo {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 360px;
-  z-index: 5;
-}
-.intro-logo img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 0 30px rgba(229,115,115,0.45));
-}
-
-/* ---------- 左侧淡红色斜梯形背景 ----------
-   左半屏约 38% 面积，与黑色低违和衔接
-   2.5s 从左侧屏幕外斜切入（缓动/晃动进入感 = 进度条同款曲线）
-------------------------------------------- */
+/* ============ 左侧淡红色楔形（细30%，喂红色区域更少） ============ */
 .red-wedge {
   position: absolute;
-  top: 0; bottom: 0;
-  left: -45%;                /* 起始于屏幕左侧之外 */
-  width: 55%;                /* 进入后约占左半屏 ~38% 可视 */
-  background: linear-gradient(135deg,
-    rgba(180,50,45,0.55) 0%,
-    rgba(120,30,30,0.30) 55%,
-    rgba(60,15,15,0.12) 100%);
+  top: 0;
+  left: 0;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(
+    92deg,
+    rgba(120, 20, 15, 0.0) 0%,
+    rgba(150, 30, 22, 0.10) 60%,
+    rgba(192, 57, 43, 0.20) 100%
+  );
+  /* 更窄的斜边，仅左侧小范围喂红色 */
   clip-path: polygon(0 0, 100% 0, 78% 100%, 0 100%);
-  filter: blur(1.5px);
-  /* 同款缓动曲线：前段慢蓄力，后段冲入 */
-  animation: wedgeIn 2.5s cubic-bezier(0.55, 0.06, 0.35, 1) forwards;
+  transform: translateX(-105%);
+  opacity: 0;
+  pointer-events: none;
   z-index: 2;
 }
+
+.red-wedge.run {
+  animation: wedgeIn 2.5s cubic-bezier(0.55, 0.06, 0.35, 0.92) forwards;
+  opacity: 1;
+}
+
 @keyframes wedgeIn {
-  0%   { left: -45%; }
-  30%  { left: 8%; }          /* 30% 进度仅到约对应位置（慢） */
-  100% { left: 0%; }          /* 最终落位 */
+  0%   { transform: translateX(-105%); opacity: 0; }
+  30%  { transform: translateX(-45%);  opacity: 0.7; }
+  100% { transform: translateX(0);     opacity: 1; }
 }
 
-/* ---------- 右侧白色细斜梯形 ----------
-   页面打开 2s 后（wedage 还差 0.5s 结束）触发
-   0.7s 从右向左匀速飞过
-------------------------------------------- */
-.white-slash {
+/* ============ Logo 区（居中偏左，位于红色背景区域内） ============ */
+.logo-area {
   position: absolute;
-  top: -10%;
+  top: 50%;
+  left: 24%;
+  transform: translate(-50%, -50%);
+  width: 440px;
+  height: 257px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.logo-area img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 24px rgba(200, 162, 74, 0.35));
+}
+
+/* ============ 白色细飞条（\ 方向：右上→左下，透明度80%） ============ */
+.white-streak {
+  position: absolute;
+  top: 0;
   right: -20%;
-  width: 22%;
-  height: 120%;
-  background: linear-gradient(100deg,
+  width: 46vw;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
     transparent 0%,
-    rgba(255,255,255,0.95) 45%,
-    #fff 55%,
-    transparent 100%);
-  clip-path: polygon(30% 0, 70% 0, 40% 100%, 0 100%);
-  transform: rotate(-8deg);
+    rgba(255, 255, 255, 0.8) 55%,
+    transparent 100%
+  );
+  /* \ 方向倾斜（右上到左下），skewY 使其沿斜线飞行 */
+  transform: rotate(-14deg);
+  transform-origin: right center;
   opacity: 0;
-  z-index: 6;
-}
-.white-slash.run {
-  animation: slashFly 0.7s linear forwards;
-  animation-delay: 2s;       /* 2s 后开始 */
-}
-@keyframes slashFly {
-  0%   { right: -20%; opacity: 1; }
-  100% { right: 110%; opacity: 1; }   /* 飞出左侧屏幕外 */
-}
-
-/* ---------- 右上角白色三角形阵列 ----------
-   白条飞过（≈2.7s）后从透明缓慢显示
-   越靠近右上角透明度越低，靠近中间侧最高 60%
-------------------------------------------- */
-.triangle-grid {
-  position: absolute;
-  top: 40px;
-  right: 40px;
-  width: 320px;
-  height: 320px;
+  pointer-events: none;
   z-index: 4;
-  opacity: 0;
-  transition: opacity 1.4s ease;
 }
-.triangle-grid.show { opacity: 1; }
 
-.tri {
+.white-streak.run {
+  animation: streakFly 1.2s linear forwards;
+  opacity: 1;
+}
+
+/* 从右侧屏幕外斜飞到左侧屏幕外（\方向平移） */
+@keyframes streakFly {
+  0%   { right: -20%; }
+  100% { right: 110%; }
+}
+
+/* ============ 右上角 7 个错列大等腰三角形 ============ */
+.tri-group {
   position: absolute;
-  width: 0; height: 0;
-  /* 朝向外（放射状），方向不一但有序 */
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 11px solid #fff;
+  top: 30px;
+  right: 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 5;
   opacity: 0;
   transition: opacity 1.6s ease;
 }
-.triangle-grid.show .tri { opacity: var(--op); }
 
-/* ============================================================
-   入场后隐藏开场层
-   ============================================================ */
-.intro-layer.hide { display: none; }
+.tri-group.show { opacity: 1; }
 
-/* 角标统一样式已在 .corner 定义，此处确保内容区角标定位 */
-.content .corner { }
+.tri-row {
+  display: flex;
+  gap: 34px;
+}
+
+/* 单个大等腰三角形（纯 CSS 边框三角形） */
+.tri {
+  width: 0;
+  height: 0;
+  opacity: 0.6;
+}
+
+/* 朝上：顶点在上 */
+.tri.up {
+  border-left: 17px solid transparent;
+  border-right: 17px solid transparent;
+  border-bottom: 30px solid #ffffff;
+}
+
+/* 朝下：顶点在下 */
+.tri.down {
+  border-left: 17px solid transparent;
+  border-right: 17px solid transparent;
+  border-top: 30px solid #ffffff;
+}
+
+/* ============ 四个角标（仅下方显示区） ============ */
+.corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--red);
+  z-index: 6;
+  pointer-events: none;
+}
+
+.corner.tl { top: 14px;    left: 14px;    border-right: none; border-bottom: none; }
+.corner.tr { top: 14px;    right: 14px;   border-left: none;  border-bottom: none; }
+.corner.bl { bottom: 14px; left: 14px;    border-right: none; border-top: none; }
+.corner.br { bottom: 14px; right: 14px;   border-left: none;  border-top: none; }
+
+/* ============ 响应式 ============ */
+@media (max-width: 860px) {
+  .topbar { gap: 14px; padding: 10px 16px; }
+  .search { flex-basis: 240px; }
+  .sub { display: none; }
+  .date { font-size: 12px; }
+  .logo-area { width: 74vw; height: auto; left: 26%; }
+  .tri-group { right: 20px; gap: 14px; }
+  .tri-row { gap: 22px; }
+     }
