@@ -1,358 +1,253 @@
 /* ============ 全局 ============ */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-:root {
-  --gold: #c8a24a;
-  --gold-light: #e8cd82;
-  --red: #c0392b;
-  --red-soft: rgba(192, 57, 43, 0.55);
-  --cyan: #00ffc8;
-}
-
-html, body { height: 100%; }
-
 body {
+  width: 100%;
   min-height: 100vh;
+  background: #050505;
+  font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #050505;
-  background-image:
-    radial-gradient(1200px 600px at 30% 20%, rgba(60, 40, 15, 0.35), transparent 60%),
-    radial-gradient(900px 700px at 80% 90%, rgba(30, 22, 8, 0.4), transparent 55%),
-    linear-gradient(160deg, #0a0a0a 0%, #050505 55%, #100c06 100%);
-  font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
-  color: #e8d9b0;
-  overflow: hidden;
 }
 
-/* ============ 顶部信息栏（始终显示，整体不变渐变） ============ */
-.topbar {
-  flex: 0 0 auto;
+/* ============ 上侧信息栏 ============ */
+.top-bar {
+  position: relative;
+  z-index: 100;
   display: flex;
   align-items: center;
-  gap: 24px;
-  padding: 12px 28px;
+  justify-content: space-between;
+  padding: 10px 24px;
   background: #080808;
-  border-bottom: 1px solid rgba(200, 162, 74, 0.25);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
-  position: relative;
-  z-index: 10;
+  border-bottom: 1px solid rgba(180, 0, 30, 0.25);
+  flex-shrink: 0;
+  height: 48px;
 }
 
-.topbar-left {
+.top-left {
   display: flex;
   align-items: baseline;
-  gap: 12px;
-  flex-shrink: 0;
+  gap: 14px;
 }
 
-.vate {
-  font-size: 19px;
+.vate-title {
+  font-size: 18px;
   font-weight: 700;
-  letter-spacing: 6px;
-  color: #e8cd82;
-  text-shadow: 0 0 12px rgba(200, 162, 74, 0.4);
+  letter-spacing: 5px;
+  color: #ffffff;
 }
 
-.sub {
-  font-size: 12px;
+.starc-sub {
+  font-size: 11px;
   letter-spacing: 2px;
-  color: var(--red-soft);
-  white-space: nowrap;
+  color: #cc0033;
 }
 
-/* 搜索框（只有框内有渐变，上侧区域整体不变） */
-.search {
-  position: relative;
-  flex: 0 1 360px;
-  margin-left: auto;
+.top-right {
   display: flex;
   align-items: center;
-  background: rgba(10, 10, 10, 0.9);
-  border: 1px solid rgba(192, 57, 43, 0.4);
-  border-radius: 4px;
-  overflow: hidden;
-  height: 36px;
+  gap: 14px;
+  margin-left: auto;
+  margin-right: 8px;
 }
 
-.search::before {
-  content: "";
+/* 搜索框 */
+.search-wrap {
+  position: relative;
+  width: 200px;
+  height: 30px;
+}
+
+.search-input {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(180, 0, 30, 0.12), rgba(180, 0, 30, 0.04));
+  border: 1px solid rgba(180, 0, 30, 0.4);
+  border-radius: 3px;
+  color: #ffffff;
+  font-size: 12px;
+  padding: 0 30px 0 10px;
+  outline: none;
+  letter-spacing: 1px;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.search-icon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 13px;
+  color: #00ffc8;
+  user-select: none;
+}
+
+/* 搜索框内红色高光闪动 */
+.search-shine {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    100deg,
-    transparent 0%,
-    rgba(192, 57, 43, 0.0) 35%,
-    rgba(192, 57, 43, 0.20) 50%,
-    rgba(192, 57, 43, 0.0) 65%,
-    transparent 100%
-  );
-  background-size: 220% 100%;
-  animation: shimmer 4s ease-in-out infinite;
+  border-radius: 3px;
+  overflow: hidden;
   pointer-events: none;
 }
 
-@keyframes shimmer {
-  0%   { background-position: 220% 0; }
-  60%  { background-position: -120% 0; }
-  100% { background-position: -120% 0; }
-}
-
-#searchInput {
-  flex: 1;
+.search-shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 60%;
   height: 100%;
-  padding: 0 12px;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: #ffffff;
-  font-size: 14px;
-  letter-spacing: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200, 0, 40, 0.25), transparent);
+  animation: searchShine 3.5s ease-in-out infinite;
 }
 
-#searchInput::placeholder {
-  color: rgba(255, 255, 255, 0.35);
+@keyframes searchShine {
+  0%   { left: -80%; }
+  60%  { left: 120%; }
+  100% { left: 120%; }
 }
 
-#searchBtn {
-  width: 40px;
-  height: 100%;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  flex-shrink: 0;
-  margin-left: 8px;
-}
-
-/* 日期：墨绿色，精确到分 */
-.date {
-  font-size: 13px;
-  letter-spacing: 1px;
-  color: #1e6b4f;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.status {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 12px;
-  letter-spacing: 2px;
-}
-
-.status .dot {
+/* 在线状态 */
+.status-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #e57373;
-  box-shadow: 0 0 8px #e57373;
+  background: #e04060;
+  box-shadow: 0 0 6px #e04060;
   animation: pulse 1.6s infinite;
-}
-
-.status .ok {
-  color: #e57373;
-  font-weight: 600;
 }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
+  50%      { opacity: 0.35; }
 }
 
-/* ============ 下方显示区（动画在此播放） ============ */
+.status-text {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #e04060;
+}
+
+/* ============ 下侧舞台 ============ */
 .stage {
-  flex: 1 1 auto;
   position: relative;
+  flex: 1;
   overflow: hidden;
   background:
-    radial-gradient(1000px 600px at 20% 80%, rgba(45, 32, 12, 0.25), transparent 60%),
-    linear-gradient(155deg, #0c0c0c 0%, #060606 60%, #0e0a05 100%);
+    radial-gradient(ellipse at 20% 50%, rgba(180, 0, 30, 0.08), transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(180, 100, 0, 0.04), transparent 50%),
+    #050505;
 }
 
-/* 底部动态抛光带 */
-.stage::after {
-  content: "";
-  position: absolute;
-  left: -30%;
-  bottom: 0;
-  width: 160%;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(200, 162, 74, 0.0) 35%,
-    rgba(200, 162, 74, 0.55) 50%,
-    rgba(200, 162, 74, 0.0) 65%,
-    transparent 100%
-  );
-  animation: polish 7s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes polish {
-  0%   { transform: translateX(-25%); }
-  100% { transform: translateX(25%); }
-}
-
-/* ============ 左侧淡红色楔形（细30%，喂红色区域更少） ============ */
+/* 红色楔形背景 —— 细30%，占约28%宽度 */
 .red-wedge {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 30%;
+  left: -35%;
+  width: 28%;
   height: 100%;
-  background: linear-gradient(
-    92deg,
-    rgba(120, 20, 15, 0.0) 0%,
-    rgba(150, 30, 22, 0.10) 60%,
-    rgba(192, 57, 43, 0.20) 100%
+  background: linear-gradient(95deg,
+    rgba(180, 0, 30, 0.85) 0%,
+    rgba(140, 0, 25, 0.75) 50%,
+    rgba(80, 0, 15, 0.5) 78%,
+    transparent 100%
   );
-  /* 更窄的斜边，仅左侧小范围喂红色 */
   clip-path: polygon(0 0, 100% 0, 78% 100%, 0 100%);
-  transform: translateX(-105%);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.red-wedge.run {
-  animation: wedgeIn 2.5s cubic-bezier(0.55, 0.06, 0.35, 0.92) forwards;
-  opacity: 1;
+  z-index: 1;
+  animation: wedgeIn 2.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
 
 @keyframes wedgeIn {
-  0%   { transform: translateX(-105%); opacity: 0; }
-  30%  { transform: translateX(-45%);  opacity: 0.7; }
-  100% { transform: translateX(0);     opacity: 1; }
+  0%   { left: -35%; }
+  30%  { left: -12%; }
+  100% { left: 0%; }
 }
 
-/* ============ Logo 区（居中偏左，位于红色背景区域内） ============ */
-.logo-area {
+/* Logo 容器 —— 居中 */
+.logo-container {
   position: absolute;
-  top: 50%;
-  left: 24%;
-  transform: translate(-50%, -50%);
-  width: 440px;
-  height: 257px;
+  inset: 0;
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 3;
+  align-items: center;
+  z-index: 5;
 }
 
-.logo-area img {
-  max-width: 100%;
-  max-height: 100%;
+.center-logo {
+  max-width: 60%;
+  max-height: 70%;
   object-fit: contain;
-  filter: drop-shadow(0 0 24px rgba(200, 162, 74, 0.35));
+  filter: drop-shadow(0 0 20px rgba(180, 0, 30, 0.3));
 }
 
-/* ============ 白色细飞条（\ 方向：右上→左下，透明度80%） ============ */
+/* 白斜线 —— \方向，从右向左，1.2s，80%透明度，细2px */
 .white-streak {
   position: absolute;
-  top: 0;
-  right: -20%;
-  width: 46vw;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.8) 55%,
-    transparent 100%
-  );
-  /* \ 方向倾斜（右上到左下），skewY 使其沿斜线飞行 */
+  top: -40%;
+  right: -5%;
+  width: 2px;
+  height: 180%;
+  background: rgba(255, 255, 255, 0.8);
   transform: rotate(-14deg);
-  transform-origin: right center;
+  z-index: 6;
   opacity: 0;
-  pointer-events: none;
-  z-index: 4;
-}
-
-.white-streak.run {
   animation: streakFly 1.2s linear forwards;
-  opacity: 1;
+  animation-delay: 2.0s;
 }
 
-/* 从右侧屏幕外斜飞到左侧屏幕外（\方向平移） */
 @keyframes streakFly {
-  0%   { right: -20%; }
-  100% { right: 110%; }
+  0%   { right: -5%; opacity: 0.8; }
+  100% { right: 105%; opacity: 0.8; }
 }
 
-/* ============ 右上角 7 个错列大等腰三角形 ============ */
-.tri-group {
+/* 右上角大六边形 */
+.hex-badge {
   position: absolute;
-  top: 30px;
-  right: 44px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  z-index: 5;
+  top: 24px;
+  right: 28px;
+  width: 52px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  z-index: 7;
   opacity: 0;
-  transition: opacity 1.6s ease;
+  animation: hexFade 1.8s ease forwards;
+  animation-delay: 2.7s;
 }
 
-.tri-group.show { opacity: 1; }
-
-.tri-row {
-  display: flex;
-  gap: 34px;
+@keyframes hexFade {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-/* 单个大等腰三角形（纯 CSS 边框三角形） */
-.tri {
-  width: 0;
-  height: 0;
-  opacity: 0.6;
-}
-
-/* 朝上：顶点在上 */
-.tri.up {
-  border-left: 17px solid transparent;
-  border-right: 17px solid transparent;
-  border-bottom: 30px solid #ffffff;
-}
-
-/* 朝下：顶点在下 */
-.tri.down {
-  border-left: 17px solid transparent;
-  border-right: 17px solid transparent;
-  border-top: 30px solid #ffffff;
-}
-
-/* ============ 四个角标（仅下方显示区） ============ */
+/* ============ 四个红色角标（仅下侧舞台） ============ */
 .corner {
   position: absolute;
-  width: 26px;
-  height: 26px;
-  border: 2px solid var(--red);
-  z-index: 6;
-  pointer-events: none;
+  width: 18px;
+  height: 18px;
+  border-color: rgba(200, 0, 40, 0.7);
+  border-style: solid;
+  z-index: 10;
 }
 
-.corner.tl { top: 14px;    left: 14px;    border-right: none; border-bottom: none; }
-.corner.tr { top: 14px;    right: 14px;   border-left: none;  border-bottom: none; }
-.corner.bl { bottom: 14px; left: 14px;    border-right: none; border-top: none; }
-.corner.br { bottom: 14px; right: 14px;   border-left: none;  border-top: none; }
+.corner-tl { top: 10px;    left: 10px;  border-width: 2px 0 0 2px; }
+.corner-tr { top: 10px;    right: 10px; border-width: 2px 2px 0 0; }
+.corner-bl { bottom: 10px; left: 10px;  border-width: 0 0 2px 2px; }
+.corner-br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
 
-/* ============ 响应式 ============ */
-@media (max-width: 860px) {
-  .topbar { gap: 14px; padding: 10px 16px; }
-  .search { flex-basis: 240px; }
-  .sub { display: none; }
-  .date { font-size: 12px; }
-  .logo-area { width: 74vw; height: auto; left: 26%; }
-  .tri-group { right: 20px; gap: 14px; }
-  .tri-row { gap: 22px; }
-     }
+/* ============ 响应式（尽量保全PC体验，适配PE） ============ */
+@media (max-width: 768px) {
+  .top-bar { padding: 8px 14px; height: 44px; }
+  .vate-title { font-size: 15px; letter-spacing: 3px; }
+  .starc-sub { font-size: 9px; }
+  .search-wrap { width: 150px; }
+  .red-wedge { width: 38%; }
+  .hex-badge { width: 38px; height: 44px; top: 16px; right: 18px; }
+}
