@@ -1,187 +1,348 @@
-/* ===== 全局重置 ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ============================================================
+   ATLAS // IDENTIFICATION CARD  ——  透明 · 高级 · 动态科幻风
+   配色：黑 · 灰 · 青(Cyan) · 绿 · 红(仅警示点缀)
+   ============================================================ */
+:root {
+  --cyan: #00e0c6;
+  --cyan-d: #00997f;
+  --green: #39d98a;
+  --red: #ff3b3b;
+  --ink: #e8f6f2;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-bd: rgba(0, 224, 198, 0.28);
 }
 
-/* ===== 页面背景 ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; }
+
 body {
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #0a0e14;
+  flex-direction: column;
+  background: #05070a;
+  /* 深色径向底 + 光斑 + 细微网格 —— 提供玻璃后面的可见层次 */
   background-image:
-    linear-gradient(rgba(0,255,200,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,200,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  font-family: 'Courier New', monospace;
-  color: #00ffc8;
+    radial-gradient(900px 500px at 22% 30%, rgba(0, 224, 198, 0.22), transparent 62%),
+    radial-gradient(700px 420px at 82% 68%, rgba(57, 217, 138, 0.14), transparent 62%),
+    radial-gradient(500px 300px at 50% 95%, rgba(0, 153, 127, 0.16), transparent 62%),
+    linear-gradient(rgba(0, 224, 198, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 224, 198, 0.05) 1px, transparent 1px);
+  background-size: auto, auto, auto, 44px 44px, 44px 44px;
+  font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* ================= 背景动态波纹 ================= */
+.bg-ripples { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.ripple {
+  position: absolute;
+  left: -20%;
+  top: 50%;
+  width: 60%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  filter: blur(1px);
+  opacity: 0;
+  animation: ripplePass 7s ease-in-out infinite;
+}
+.ripple.r1 { animation-delay: 0s; top: 38%; }
+.ripple.r2 { animation-delay: 2.3s; top: 55%; width: 45%; }
+.ripple.r3 { animation-delay: 4.6s; top: 72%; width: 70%; }
+
+@keyframes ripplePass {
+  0%   { left: -25%; opacity: 0; }
+  15%  { opacity: 0.7; }
+  100% { left: 115%; opacity: 0; }
+}
+
+/* ================= 顶部搜索栏（全屏横向） ================= */
+.top-bar {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  padding: 18px 40px;
+  background: linear-gradient(180deg, rgba(5,7,10,0.85), rgba(5,7,10,0.2));
+  border-bottom: 1px solid var(--glass-bd);
+  backdrop-filter: blur(6px);
+}
+.top-bar__inner {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand__mark {
+  font-size: 22px; font-weight: 700; letter-spacing: 4px;
+  color: #fff;
+  text-shadow: 0 0 14px rgba(0, 224, 198, 0.6);
+}
+.brand__sub { font-size: 11px; letter-spacing: 3px; color: rgba(0, 224, 198, 0.6); }
+
+/* 搜索框 —— 内置名字 OMEGA-07 */
+.search {
+  position: relative;
+  flex: 1;
+  max-width: 520px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--glass-bd);
+  border-radius: 4px;
   overflow: hidden;
 }
-
-/* ===== 扫描线 ===== */
-.scanline {
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,255,200,0.015) 2px,
-    rgba(0,255,200,0.015) 4px
-  );
-  pointer-events: none;
-  z-index: 999;
-}
-
-/* ===== 主卡片 ===== */
-.card {
-  width: 460px;
-  padding: 32px 28px 24px;
-  background: rgba(0, 20, 30, 0.85);
-  border: 1px solid rgba(0,255,200,0.25);
-  clip-path: polygon(
-    0 0, 100% 0, 100% calc(100% - 18px),
-    calc(100% - 18px) 100%, 0 100%
-  );
-  position: relative;
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 2px;
-  background: linear-gradient(90deg, transparent, #00ffc8, transparent);
-}
-
-/* ===== 顶部标识 ===== */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 28px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(0,255,200,0.15);
-}
-
-.brand {
-  font-size: 13px;
-  letter-spacing: 4px;
-  opacity: 0.7;
-}
-
-.status {
-  font-size: 11px;
+.search__icon { color: var(--cyan); font-size: 16px; }
+.search__input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font: 600 14px "Segoe UI", monospace;
   letter-spacing: 2px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+}
+/* 搜索框内一道独立扫光 */
+.search__scan {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(0, 224, 198, 0.25), transparent);
+  animation: scanLine 4s linear infinite;
+}
+@keyframes scanLine {
+  0%   { left: -35%; }
+  100% { left: 110%; }
 }
 
+.status-mini {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; letter-spacing: 2px; color: rgba(0,224,198,0.7);
+}
 .dot {
-  width: 7px; height: 7px;
-  background: #00ffc8;
-  border-radius: 50%;
-  animation: pulse 1.5s ease-in-out infinite;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 10px var(--green);
+  animation: pulse 1.6s infinite;
 }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.35;} }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.2; }
-}
-
-/* ===== Logo 区域 ===== */
-.logo-wrap {
+/* ================= 主名片 ================= */
+.card {
   position: relative;
-  width: 180px;
-  height: 180px;
-  margin: 0 auto 28px;
-  display: flex;
+  z-index: 2;
+  flex: 1;
+  width: 100%;
+  max-width: 1600px;
+  margin: 26px auto 40px;
+  padding: 44px 56px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;   /* 三列铺满横向 */
+  gap: 40px;
   align-items: center;
-  justify-content: center;
+  /* 透明玻璃质感 —— 半透明 + 毛玻璃 + 高光边 */
+  background: linear-gradient(135deg, rgba(20,38,46,0.30), rgba(8,16,20,0.42));
+  border: 1px solid rgba(0, 224, 198, 0.40);
+  border-radius: 10px;
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow:
+    0 24px 70px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.14),      /* 顶部高光线 */
+    inset 1px 0 0 rgba(0, 224, 198, 0.18),
+    inset -1px 0 0 rgba(0, 224, 198, 0.10),
+    inset 0 -1px 0 rgba(57, 217, 138, 0.14),
+    inset 0 0 70px rgba(0, 224, 198, 0.06);     /* 内青色辉光 */
+  overflow: hidden;
+}
+/* 玻璃表面一道斜向反光（静态高光，增强通透感） */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -60%;
+  width: 45%; height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255,255,255,0.05) 48%,
+    rgba(0, 224, 198, 0.08) 52%,
+    transparent 100%
+  );
+  transform: skewX(-12deg);
+  pointer-events: none;
+  z-index: 1;
+}
+.card > * { position: relative; z-index: 2; }   /* 内容在上层 */
+
+/* ===== 波纹扫光：左 → 右，前30%慢(蓄力)，后段快(冲刺) =====
+   用 background-position 让渐变色带本身从左流到右 ——
+   经过任意像素时，颜色会依次由青 → 绿变化（真正的"颜色从左到右变化感"）
+   宽度取 260%：前 30% 进度蓄力慢，之后冲刺快速冲过。 */
+.sweep {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0; right: 0;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 224, 198, 0.14) 30%,     /* 青 · 蓄力段 */
+    rgba(0, 224, 198, 0.40) 62%,
+    rgba(57, 217, 138, 0.55) 82%,    /* 绿 · 冲刺段 */
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  background-position: 100% 50%;      /* 起始：渐变带整体偏右（不可见） */
+  filter: blur(2px);
+  animation: sweepFlow 6s cubic-bezier(.55,.05,.35,1) infinite;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.9;
+}
+@keyframes sweepFlow {
+  0%   { background-position: 100% 50%; opacity: 0; }
+  8%   { opacity: 0.9; }              /* 淡入 */
+  30%  { background-position: 55% 50%; }  /* ← 蓄力：前30%进度走得很慢 */
+  75%  { background-position: 0% 50%; opacity: 0.9; }  /* 冲刺：迅速冲到最左，颜色完全流过 */
+  92%  { opacity: 0.5; }
+  100% { background-position: 0% 50%; opacity: 0; }
 }
 
-/* 旋转科技环 */
+/* 边角装饰 */
+.corner { position: absolute; width: 22px; height: 22px; border: 2px solid var(--cyan); }
+.corner--tl { top: 12px; left: 12px;  border-right: none; border-bottom: none; }
+.corner--tr { top: 12px; right: 12px; border-left: none;  border-bottom: none; }
+.corner--bl { bottom: 12px; left: 12px;  border-right: none; border-top: none; }
+.corner--br { bottom: 12px; right: 12px; border-left: none;  border-top: none; }
+
+/* ================= Logo 区 ================= */
+.card__left { display: flex; flex-direction: column; align-items: center; gap: 26px; }
+
+.logo-frame {
+  position: relative;
+  width: 240px;      /* Logo 约 1200×700（宽:高 ≈ 12:7），用横向框 */
+  height: 140px;
+  display: flex; justify-content: center; align-items: center;
+}
 .ring {
   position: absolute;
   border-radius: 50%;
-  border: 1px solid rgba(0,255,200,0.15);
+  border: 1px solid rgba(0, 224, 198, 0.45);
 }
+/* 椭圆环贴合横向 Logo，三环差速旋转 */
+.ring--1 { inset: -10px; border-top-color: var(--cyan); animation: spin 6s linear infinite; border-radius: 50% / 60%; }
+.ring--2 { inset: 8px;   border: 1px dashed rgba(0, 224, 198, 0.28); animation: spin 11s linear infinite reverse; border-radius: 50% / 60%; }
+.ring--3 { inset: 22px;  border: 1px solid rgba(57, 217, 138, 0.2); animation: spin 9s linear infinite; border-radius: 50% / 60%; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-.ring-outer {
-  width: 180px; height: 180px;
-  border-top-color: rgba(0,255,200,0.6);
-  border-bottom-color: rgba(0,255,200,0.6);
-  animation: spin 6s linear infinite;
-}
-
-.ring-inner {
-  width: 148px; height: 148px;
-  border-left-color: rgba(0,255,200,0.4);
-  border-right-color: rgba(0,255,200,0.4);
-  animation: spin-reverse 4s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-@keyframes spin-reverse {
-  to { transform: rotate(-360deg); }
-}
-
-/* ===== Logo 图片：从左到右透明度渐变 ===== */
 .logo {
-  width: 110px;
-  height: auto;
-  position: relative;
+  width: 100%;      /* 填满横向框，object-fit 保持比例 */
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 16px rgba(0, 224, 198, 0.55));
   z-index: 2;
-
-  /* 从左到右：完全透明 → 完全不透明 */
-  -webkit-mask-image: linear-gradient(to right, transparent, black);
-  mask-image: linear-gradient(to right, transparent, black);
-
-  /* 发光 */
-  filter: drop-shadow(0 0 12px rgba(0,255,200,0.5));
+  animation: logoFloat 5s ease-in-out infinite;
 }
+@keyframes logoFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }
 
-/* ===== 信息栏 ===== */
-.info {
-  margin-bottom: 20px;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(0,255,200,0.06);
-}
-
+.designation { text-align: center; }
 .label {
-  font-size: 10px;
-  letter-spacing: 3px;
-  opacity: 0.45;
+  font-size: 10px; letter-spacing: 4px;
+  color: rgba(0, 224, 198, 0.6);
+  margin-bottom: 6px;
 }
-
 .value {
-  font-size: 12px;
-  letter-spacing: 2px;
-  font-weight: bold;
+  font-size: 20px; font-weight: 700; letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 0 0 12px rgba(0, 224, 198, 0.35);
 }
 
-.glow {
-  color: #00ffc8;
-  text-shadow: 0 0 8px rgba(0,255,200,0.6);
-}
+/* ================= 中列：信息 + 蓄力进度 ================= */
+.card__center { display: flex; flex-direction: column; gap: 18px; }
 
-/* ===== 条形码 ===== */
+.field .value { font-size: 24px; }
+
+/* 蓄力式进度条：前30%慢 → 后段快 */
+.charge { margin-top: 8px; }
+.charge__track {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.charge__fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--cyan-d), var(--cyan) 55%, var(--green));
+  border-radius: 3px;
+  transform-origin: left;
+  animation: chargeFill 6s cubic-bezier(.55,.05,.35,1) infinite;
+  box-shadow: 0 0 10px rgba(0, 224, 198, 0.6);
+}
+@keyframes chargeFill {
+  0%   { transform: scaleX(0); }
+  30%  { transform: scaleX(0.30); }   /* 蓄力：前30%慢慢填 */
+  75%  { transform: scaleX(1); }       /* 冲刺：迅速填满 */
+  90%  { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0.35; }
+}
+.charge__readout {
+  display: flex; justify-content: space-between;
+  font-size: 10px; letter-spacing: 2px;
+  color: rgba(0, 224, 198, 0.65);
+  margin-top: 8px;
+}
+.charge__pct { color: var(--green); font-weight: 700; }
+
+/* ================= 右列：数据 + 条形码 ================= */
+.card__right { display: flex; flex-direction: column; gap: 14px; align-items: flex-end; }
+
+.data-row {
+  width: 100%;
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 11px; letter-spacing: 2px;
+  color: rgba(0, 224, 198, 0.6);
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(0, 224, 198, 0.15);
+}
+.data-row b { color: #fff; font-size: 13px; letter-spacing: 1px; }
+.data-row .ok { color: var(--green); }
+
 .barcode {
-  height: 28px;
-  margin-top: 16px;
-  display: flex;
-  align-items: flex-end;
-  opacity: 0.5;
+  display: flex; gap: 3px; align-items: center;
+  height: 56px; width: 100%;
+  margin-top: 6px;
+}
+.barcode span {
+  flex: 1;
+  width: 2px;
+  background: linear-gradient(var(--cyan), rgba(0,224,198,0.3));
+  border-radius: 1px;
+}
+
+.sig { width: 100%; margin-top: 6px; }
+.sig__line {
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  margin-bottom: 8px;
+}
+.sig__name {
+  font-size: 10px; letter-spacing: 2px;
+  color: rgba(0, 224, 198, 0.55);
+}
+
+/* ================= 响应式 ================= */
+@media (max-width: 900px) {
+  .card { grid-template-columns: 1fr; padding: 34px 24px; gap: 28px; }
+  .card__right { align-items: center; }
+  .top-bar { padding: 14px 20px; }
+  .search { max-width: none; }
   }
