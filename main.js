@@ -1,407 +1,186 @@
 /* ============================================================
-   VATE // 陨篂 YunXing 个人网址
-   风格：黑金 · 巨神科幻 · PC级浏览器对象
+   VATE // 主逻辑
+   - 保留进度条「蓄力→冲刺」递增算法（用于开场缓动）
+   - 搜索框：输入上限15字，回车/图标触发比较函数
+   - 开场动画时序：Logo2 → 白条飞至一半 → 切 Logo1
    ============================================================ */
 
-/* ============ 全局重置 ============ */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+(() => {
+  'use strict';
 
-:root {
-  --red:        #c0392b;      /* 主红 */
-  --red-soft:   #e57373;      /* 淡红 */
-  --red-glow:   rgba(229,115,115,0.55);
-  --gold:       #c9a227;      /* 金 */
-  --gold-light: #e8c96a;
-  --gold-soft:  rgba(201,162,39,0.35);
-  --bg-deep:    #050505;
-  --bg-panel:   #0c0c0c;
-  --text:       #e8ddc4;
-  --text-dim:   rgba(232,221,196,0.55);
-  /* 沿用旧版 //SDF 青色作为搜索图标/点缀色 */
-  --cyan:       #00ffc8;
-}
+  /* ----------------------------------------------------------
+   * 1) 进度条递增算法（蓄力 → 冲刺）
+   *    前 30% 进度慢，之后加速冲过 —— 保留自上一版
+   * -------------------------------------------------------- */
+  function easeCharge(t) {
+    // t ∈ [0,1]；返回填充量，同样在 t=0.30 时约 0.30 附近蓄力后提速
+    if (t <= 0.30) {
+      return t; // 前 30% 线性偏慢
+    }
+    // 30%→100%：二次缓出，快速冲至终点
+    const x = (t - 0.30) / 0.70;
+    return 0.30 + (1 - 0.30) * (x * (2 - x));
+  }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
+  // 演示：按算法推进开场楔形（可视化校验，实际动画由 CSS 承担）
+  function runChargeProgress(onUpdate, onDone) {
+    const dur = 2500; // 2.5s，与 CSS wedgeIn 一致
+    const start = performance.now();
+    function frame(now) {
+      const t = Math.min((now - start) / dur, 1);
+      const v = easeCharge(t);
+      onUpdate?.(v);
+      if (t < 1) requestAnimationFrame(frame);
+      else onDone?.();
+    }
+    requestAnimationFrame(frame);
+  }
 
-body {
-  font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
-  background: var(--bg-deep);
-  color: var(--text);
-  /* PC 固定视口，移动端强制按设备宽度但渲染 PC 布局 */
-  min-width: 1024px;
-}
+  /* ----------------------------------------------------------
+   * 2) 搜索比较函数（可扩展）
+   *    input 与任一「后续设定内容」匹配 → 执行对应逻辑
+   *    否则把显示值置为「搜索失败/No text」
+   * -------------------------------------------------------- */
+  const searchInput = document.getElementById('searchInput');
+  const searchBtn   = document.getElementById('searchBtn');
 
-/* ============ 主应用容器（PC 全屏） ============ */
-.app {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  /* 黑金渐变背景（色差柔和） */
-  background:
-    radial-gradient(ellipse at 20% 0%, rgba(40,28,10,0.55) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 100%, rgba(60,42,14,0.45) 0%, transparent 60%),
-    linear-gradient(160deg, #0a0a0a 0%, #050505 100%);
-}
+  // 【扩展点】后续在此对象里追加 关键词: 回调函数 即可
+  const commandMap = {
+    'help':    () => console.log('[VATE] 帮助菜单'),
+    'about':   () => console.log('[VATE] 关于陨篂/YunXing'),
+    'clear':   () => { searchInput.value = ''; setDisplay(''); },
+    // ... 更多指令后续添加
+  };
 
-/* ============================================================
-   顶部黑色标题框
-   ============================================================ */
-.top-bar {
-  position: relative;
-  flex: 0 0 auto;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  background: linear-gradient(90deg, #0a0a0a 0%, #141414 50%, #0a0a0a 100%);
-  border-bottom: 1px solid rgba(229,115,115,0.28);
-  box-shadow: 0 2px 24px rgba(0,0,0,0.6);
-  z-index: 20;
-  overflow: hidden;
-}
+  // 兜底匹配数组（也支持数组里直接列字符串）
+  const matchList = ['vate', '褐蝎', 'star', 'yunxing', '陨篂'];
 
-/* 顶部黑色与下方微妙的色差感 */
-.top-bar::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--red-glow), transparent);
-}
+  /**
+   * 比较函数：把输入 string 与已设定内容比对
+   * @param {string} raw
+   * @returns {{matched:boolean, value:string}}
+   */
+  function compareInput(raw) {
+    const val = (raw || '').trim();
+    if (!val) {
+      return { matched: false, value: '搜索失败/No text' };
+    }
 
-/* 左上角淡红斜梯形背景 */
-.top-red-wedge {
-  position: absolute;
-  top: 0; left: 0;
-  width: 220px; height: 100%;
-  background: linear-gradient(135deg, rgba(229,115,115,0.16) 0%, rgba(229,115,115,0.05) 60%, transparent 100%);
-  clip-path: polygon(0 0, 100% 0, 70% 100%, 0 100%);
-  pointer-events: none;
-}
+    const lower = val.toLowerCase();
 
-/* ============ 角标（红色，四角） ============ */
-.corner {
-  position: absolute;
-  width: 12px; height: 12px;
-  border: 2px solid var(--red);
-  pointer-events: none;
-}
-.corner-tl { top: 6px;    left: 6px;    border-right: none; border-bottom: none; }
-.corner-tr { top: 6px;    right: 6px;   border-left: none;  border-bottom: none; }
-.corner-bl { bottom: 6px; left: 6px;    border-right: none; border-top: none; }
-.corner-br { bottom: 6px; right: 6px;   border-left: none;  border-top: none; }
+    // 2a) 对象指令精确匹配
+    if (commandMap.hasOwnProperty(lower)) {
+      return { matched: true, value: val };
+    }
+    // 2b) 列表模糊匹配
+    const hit = matchList.find(k => lower.includes(k));
+    if (hit) {
+      return { matched: true, value: val };
+    }
 
-/* ============ 左侧品牌 VATE ============ */
-.top-left {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 2;
-}
+    // 未匹配 → 显示失败文案
+    return { matched: false, value: '搜索失败/No text' };
+  }
 
-.brand {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
+  /** 执行搜索：存变量 + 比较 + 触发 */
+  let lastSearch = '';
+  function executeSearch() {
+    lastSearch = searchInput.value;        // 存进变量
+    const { matched, value } = compareInput(lastSearch);
 
-.brand-name {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 6px;   /* 与 ATLAS 差不多大小间距 */
-  color: #fff;
-  text-shadow: 0 0 12px rgba(229,115,115,0.5);
-}
+    if (matched) {
+      searchInput.value = value;           // 保留显示输入内容
+      // 命中 → 执行对应函数（后续扩展入口）
+      const fn = commandMap[value.toLowerCase()];
+      if (fn) fn();
+      console.log('[VATE] 命中:', value);
+    } else {
+      searchInput.value = value;           // 显示「搜索失败/No text」
+    }
+  }
 
-.brand-sub {
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--red-soft);
-  /* 淡红渐变文字 */
-  background: linear-gradient(90deg, var(--red-soft), #f0a0a0);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+  // 回车键
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') executeSearch();
+  });
+  // 放大镜图标点击
+  searchBtn.addEventListener('click', executeSearch);
 
-/* ============ 中间搜索框 ============ */
-.search-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 340px;
-  height: 38px;
-  padding: 0 14px 0 40px;
-  background: rgba(10,10,10,0.85);
-  border: 1px solid rgba(229,115,115,0.3);
-  border-radius: 2px;
-  z-index: 2;
-}
+  /** 供外部直接设置显示内容（不触发比较） */
+  function setDisplay(txt) { searchInput.value = txt; }
 
-.search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--cyan);   /* 放大镜颜色沿用 //SDF 青色不变 */
-  cursor: pointer;
-  display: flex;
-  z-index: 3;
-  transition: opacity .15s;
-}
-.search-icon:hover { opacity: .8; }
+  /* ----------------------------------------------------------
+   * 3) 开场动画时序
+   *    t=0     : Logo2 居中显示
+   *    t=2.0s  : 白色细斜梯形开始从右向左飞 (0.7s)
+   *    t=2.35s : 白条飞行到一半(0.35s) → 隐藏 Logo2 / 显示 Logo1
+   *    t=2.7s+ : 白条飞过，右上角三角形阵列渐显
+   * -------------------------------------------------------- */
+  const introLayer   = document.getElementById('introLayer');
+  const introLogo    = document.getElementById('introLogo');
+  const introLogoImg = document.getElementById('introLogoImg');
+  const whiteSlash   = document.getElementById('whiteSlash');
+  const triGrid      = document.getElementById('triangleGrid');
 
-.search-input {
-  width: 100%;
-  height: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: #fff;           /* 输入内容白色 */
-  font-size: 14px;
-  letter-spacing: 1px;
-  font-family: inherit;
-}
-.search-input::placeholder { color: rgba(255,255,255,0.35); }
+  function buildTriangles() {
+    // 右上角规律排列的白色三角形阵列（固定 8x8 网格，不依赖运行时尺寸）
+    // 越靠近右上角透明度越低，越靠近中间侧越高，最高 60%
+    const cols = 8, rows = 8;
+    const gridSize = 320;
+    const cellW = gridSize / cols, cellH = gridSize / rows;
 
-/* 搜索框内高光闪动（淡红色，保留） */
-.search-shine {
-  position: absolute;
-  top: 0; bottom: 0;
-  left: -40%;
-  width: 40%;
-  background: linear-gradient(100deg, transparent, rgba(229,115,115,0.35), transparent);
-  transform: skewX(-18deg);
-  animation: searchShine 3.2s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes searchShine {
-  0%, 60% { left: -40%; }
-  100%   { left: 120%; }
-}
+    for (let i = 0; i < rows; i++) {        // i=0 最靠上(贴近右上角)
+      for (let j = 0; j < cols; j++) {      // j 越大越靠右(贴近右上角)
+        const tri = document.createElement('div');
+        tri.className = 'tri';
 
-/* ============ 右侧标题 + 状态 ============ */
-.top-right {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  z-index: 2;
-}
+        // 距离因子：越靠右上角(远离中心)越透明；越靠中间侧越不透明，封顶 0.60
+        const dist = (i / rows) + ((cols - 1 - j) / cols); // 0(右上) → ~2(左下)
+        const opacity = Math.min(0.60, 0.06 + dist * 0.32);
 
-.site-title {
-  font-size: 13px;
-  letter-spacing: 1px;
-  color: var(--text-dim);
-}
+        tri.style.left = (j * cellW + cellW * 0.5 - 6) + 'px';
+        tri.style.top  = (i * cellH + cellH * 0.5 - 5) + 'px';
+        // 方向规律交替（上下朝向不一但井然有序）
+        if ((i + j) % 2 === 0) {
+          tri.style.transform = 'rotate(180deg)'; // 朝下
+        }
+        tri.style.setProperty('--op', opacity.toFixed(2));
+        triGrid.appendChild(tri);
+      }
+    }
+  }
 
-.status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  letter-spacing: 2px;
-}
+  function startIntro() {
+    buildTriangles();
 
-/* online 浅红色（与闪烁点同色） */
-.status-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--red-soft);
-  box-shadow: 0 0 8px var(--red-glow);
-  animation: pulse 1.6s infinite;
-}
-.status-text { color: var(--red-soft); }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+    // 启动白条动画（CSS animation-delay: 2s）
+    whiteSlash.classList.add('run');
 
-/* ============================================================
-   主体内容区
-   ============================================================ */
-.content {
-  position: relative;
-  flex: 1 1 auto;
-  margin: 18px;
-  border: 1px solid rgba(201,162,39,0.25);
-  background:
-    linear-gradient(135deg, rgba(20,16,8,0.5), rgba(8,8,8,0.5));
-  overflow: hidden;
-}
+    // 白条飞到一半 = 2s + 0.35s = 2.35s → 切换 Logo
+    setTimeout(() => {
+      introLogoImg.src = 'Logo1.png';   // 同位置切为 Logo1
+    }, 2350);
 
-/* 动态黑金渐变抛光层 */
-.gold-polish {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg,
-    transparent 0%,
-    rgba(201,162,39,0.06) 35%,
-    rgba(232,201,106,0.12) 50%,
-    rgba(201,162,39,0.06) 65%,
-    transparent 100%);
-  background-size: 220% 100%;
-  animation: polish 7s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes polish {
-  0%, 100% { background-position: 0% 50%; }
-  50%      { background-position: 100% 50%; }
-}
+    // 白条飞完（2.7s）后 → 三角形阵列缓慢显示
+    setTimeout(() => {
+      triGrid.classList.add('show');
+    }, 2700);
 
-.content-inner {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  text-align: center;
-}
+    // 整体开场约 4.5s 后收尾隐藏（可选保留巨神氛围）
+    setTimeout(() => {
+      introLayer.classList.add('hide');
+    }, 4500);
+  }
 
-.content-inner .label {
-  font-size: 12px;
-  letter-spacing: 6px;
-  color: var(--gold);
-}
+  // 启动
+  window.addEventListener('load', startIntro);
 
-.content-inner .title {
-  font-size: 34px;
-  font-weight: 700;
-  letter-spacing: 4px;
-  background: linear-gradient(90deg, #e8c96a, #c9a227, #e8c96a);
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: titleShine 5s ease-in-out infinite;
-}
-@keyframes titleShine { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+  /* ----------------------------------------------------------
+   * 4) （可选）开场楔形进度可视化 —— 复用蓄力算法
+   * -------------------------------------------------------- */
+  runChargeProgress((v) => {
+    // v: 0→1 的蓄力-冲刺进度，可用于驱动其他数值
+    // console.log('charge:', (v*100).toFixed(1) + '%');
+  });
 
-.content-inner .subtitle {
-  font-size: 13px;
-  letter-spacing: 3px;
-  color: var(--text-dim);
-}
-
-/* ============================================================
-   开场动画层（覆盖整屏）
-   ============================================================ */
-.intro-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  pointer-events: none;
-  background: var(--bg-deep);
-}
-
-/* 中心 Logo */
-.intro-logo {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 360px;
-  z-index: 5;
-}
-.intro-logo img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 0 30px rgba(229,115,115,0.45));
-}
-
-/* ---------- 左侧淡红色斜梯形背景 ----------
-   左半屏约 38% 面积，与黑色低违和衔接
-   2.5s 从左侧屏幕外斜切入（缓动/晃动进入感 = 进度条同款曲线）
-------------------------------------------- */
-.red-wedge {
-  position: absolute;
-  top: 0; bottom: 0;
-  left: -45%;                /* 起始于屏幕左侧之外 */
-  width: 55%;                /* 进入后约占左半屏 ~38% 可视 */
-  background: linear-gradient(135deg,
-    rgba(180,50,45,0.55) 0%,
-    rgba(120,30,30,0.30) 55%,
-    rgba(60,15,15,0.12) 100%);
-  clip-path: polygon(0 0, 100% 0, 78% 100%, 0 100%);
-  filter: blur(1.5px);
-  /* 同款缓动曲线：前段慢蓄力，后段冲入 */
-  animation: wedgeIn 2.5s cubic-bezier(0.55, 0.06, 0.35, 1) forwards;
-  z-index: 2;
-}
-@keyframes wedgeIn {
-  0%   { left: -45%; }
-  30%  { left: 8%; }          /* 30% 进度仅到约对应位置（慢） */
-  100% { left: 0%; }          /* 最终落位 */
-}
-
-/* ---------- 右侧白色细斜梯形 ----------
-   页面打开 2s 后（wedage 还差 0.5s 结束）触发
-   0.7s 从右向左匀速飞过
-------------------------------------------- */
-.white-slash {
-  position: absolute;
-  top: -10%;
-  right: -20%;
-  width: 22%;
-  height: 120%;
-  background: linear-gradient(100deg,
-    transparent 0%,
-    rgba(255,255,255,0.95) 45%,
-    #fff 55%,
-    transparent 100%);
-  clip-path: polygon(30% 0, 70% 0, 40% 100%, 0 100%);
-  transform: rotate(-8deg);
-  opacity: 0;
-  z-index: 6;
-}
-.white-slash.run {
-  animation: slashFly 0.7s linear forwards;
-  animation-delay: 2s;       /* 2s 后开始 */
-}
-@keyframes slashFly {
-  0%   { right: -20%; opacity: 1; }
-  100% { right: 110%; opacity: 1; }   /* 飞出左侧屏幕外 */
-}
-
-/* ---------- 右上角白色三角形阵列 ----------
-   白条飞过（≈2.7s）后从透明缓慢显示
-   越靠近右上角透明度越低，靠近中间侧最高 60%
-------------------------------------------- */
-.triangle-grid {
-  position: absolute;
-  top: 40px;
-  right: 40px;
-  width: 320px;
-  height: 320px;
-  z-index: 4;
-  opacity: 0;
-  transition: opacity 1.4s ease;
-}
-.triangle-grid.show { opacity: 1; }
-
-.tri {
-  position: absolute;
-  width: 0; height: 0;
-  /* 朝向外（放射状），方向不一但有序 */
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 11px solid #fff;
-  opacity: 0;
-  transition: opacity 1.6s ease;
-}
-.triangle-grid.show .tri { opacity: var(--op); }
-
-/* ============================================================
-   入场后隐藏开场层
-   ============================================================ */
-.intro-layer.hide { display: none; }
-
-/* 角标统一样式已在 .corner 定义，此处确保内容区角标定位 */
-.content .corner { }
+})();
