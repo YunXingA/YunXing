@@ -3,65 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>陨篂/YunXing 个人主页</title>
+  <title>陨篂/YunXing个人主页</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- ============ 顶部信息栏（始终显示） ============ -->
-  <header class="topbar">
-
-    <!-- 左侧：VATE + //StarYC -->
-    <div class="topbar-left">
-      <span class="vate">VATE</span>
-      <span class="sub">//StarYC · ID-褐蝎 V1.0</span>
+  <!-- ============ 上侧搜索/信息区 ============ -->
+  <div class="top-bar">
+    <div class="top-left">
+      <span class="vate-title">VATE</span>
+      <span class="starc-sub">//StarYC · ID-褐蝎 V1.0</span>
     </div>
 
-    <!-- 中间：搜索框（仅框内有渐变） -->
-    <div class="search">
-      <input id="searchInput" type="text" maxlength="15" placeholder="Input">
-      <button id="searchBtn" title="搜索">
-        <svg viewBox="0 0 24 24" width="18" height="18">
-          <circle cx="10" cy="10" r="6.5" fill="none" stroke="#00ffc8" stroke-width="2"/>
-          <line x1="15" y1="15" x2="20.5" y2="20.5" stroke="#00ffc8" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
+    <div class="top-right">
+      <div class="search-wrap">
+        <span class="search-icon" id="searchBtn">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="Input" maxlength="15" autocomplete="off">
+        <div class="search-shine"></div>
+      </div>
+      <span class="status-dot"></span>
+      <span class="status-text">ONLINE</span>
     </div>
+  </div>
 
-    <!-- 右侧：日期 + 在线状态 -->
-    <div class="topbar-right">
-      <span class="date" id="clock">----/--/-- --:--</span>
-      <span class="status">
-        <span class="dot"></span>
-        <span class="ok">ONLINE</span>
-      </span>
-    </div>
-  </header>
+  <!-- ============ 下侧显示区（动画 + 内容全在这里） ============ -->
+  <div class="stage" id="stage">
 
-  <!-- ============ 下方显示区（动画在此播放） ============ -->
-  <main class="stage" id="stage">
-
-    <!-- 左侧淡红色背景楔形（细，喂红色区域少） -->
+    <!-- 左侧红色楔形背景 -->
     <div class="red-wedge" id="redWedge"></div>
 
-    <!-- 中间 Logo 显示区 -->
-    <div class="logo-area">
-      <img id="logoImg" src="Logo2.png" alt="Logo">
+    <!-- 中间 Logo（动画中切换） -->
+    <div class="logo-container">
+      <img src="Logo2.png" alt="Logo" id="centerLogo" class="center-logo">
     </div>
 
-    <!-- 从右向左飞过的白色细斜条（\ 方向） -->
+    <!-- 白斜线（\ 方向，从右向左飞） -->
     <div class="white-streak" id="whiteStreak"></div>
 
-    <!-- 右上角 7 个错列大等腰三角形 -->
-    <div class="tri-group" id="triGroup"></div>
+    <!-- 右上角大六边形 -->
+    <div class="hex-badge" id="hexBadge"></div>
 
-    <!-- 四个角标（仅下方显示区） -->
-    <div class="corner tl"></div>
-    <div class="corner tr"></div>
-    <div class="corner bl"></div>
-    <div class="corner br"></div>
-
-  </main>
+    <!-- 四个红色角标（仅下侧） -->
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+  </div>
 
   <script src="main.js"></script>
 </body>
