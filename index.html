@@ -10,36 +10,23 @@
 
   <!-- ================= 开场动画层 ================= -->
   <div class="intro-layer" id="introLayer">
-
-    <!-- 中心 Logo -->
     <div class="intro-logo" id="introLogo">
       <img id="introLogoImg" src="Logo2.png" alt="Logo">
     </div>
-
-    <!-- 左侧淡红色斜梯形背景（2.5s 从左侧斜切入） -->
     <div class="red-wedge" id="redWedge"></div>
-
-    <!-- 右侧白色细斜梯形（2s后 0.7s 从右向左飞过） -->
     <div class="white-slash" id="whiteSlash"></div>
-
-    <!-- 右上角规律白色三角形阵列（白条飞过后渐显） -->
     <div class="triangle-grid" id="triangleGrid"></div>
-
   </div>
 
   <!-- ================= 主 UI ================= -->
   <div class="app" id="app">
 
-    <!-- 顶部黑色标题框（淡红渐变 / 角标保留） -->
+    <!-- 顶部搜索栏 -->
     <header class="top-bar">
-
-      <!-- 左上角淡红色斜梯形背景（呼应开场，静态常驻） -->
       <div class="top-red-wedge"></div>
 
-      <!-- 左侧：VATE 标识 + 角标 -->
+      <!-- 左侧：VATE 标识 -->
       <div class="top-left">
-        <span class="corner corner-tl"></span>
-        <span class="corner corner-bl"></span>
         <div class="brand">
           <span class="brand-name">VATE</span>
           <span class="brand-sub">//StarYC · ID-褐蝎 V1.0</span>
@@ -48,13 +35,7 @@
 
       <!-- 中间：搜索框 -->
       <div class="search-box">
-        <span class="corner corner-tl"></span>
-        <span class="corner corner-tr"></span>
-        <span class="corner corner-bl"></span>
-        <span class="corner corner-br"></span>
-
         <span class="search-icon" id="searchBtn" title="搜索">
-          <!-- 放大镜 SVG（颜色沿用 //SDF 主色） -->
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="10.5" cy="10.5" r="6.5"/>
             <line x1="15.5" y1="15.5" x2="20" y2="20" stroke-linecap="round"/>
@@ -72,27 +53,24 @@
         <span class="search-shine"></span>
       </div>
 
-      <!-- 右侧：站点标题 + 在线状态 -->
+      <!-- 右侧：实时世界时间 -->
       <div class="top-right">
-        <span class="site-title">陨篂/YunXing的个人网址</span>
+        <span class="world-time" id="worldTime">--:--:--</span>
         <span class="status">
           <span class="status-dot"></span>
           <span class="status-text">ONLINE</span>
         </span>
-        <span class="corner corner-tr"></span>
-        <span class="corner corner-br"></span>
       </div>
 
     </header>
 
-    <!-- 主体内容区（黑金渐变 / 四角标红色） -->
+    <!-- 主体信息区 -->
     <main class="content">
       <span class="corner corner-tl"></span>
       <span class="corner corner-tr"></span>
       <span class="corner corner-bl"></span>
       <span class="corner corner-br"></span>
 
-      <!-- 动态黑金渐变抛光层 -->
       <div class="gold-polish"></div>
 
       <div class="content-inner">
