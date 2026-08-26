@@ -1,443 +1,63 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YunXing/陨篂的个人主页</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            overflow: hidden;
-            padding-top: 15vh;
-        }
-
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .star {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle var(--duration) ease-in-out infinite;
-            opacity: 0;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0; transform: scale(0.5); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        .container {
-            text-align: center;
-            z-index: 1;
-            padding: 40px;
-        }
-
-        .hello {
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            font-weight: 800;
-            background: linear-gradient(90deg, #4ade80, #e5e7eb, #7ec8e3, #4ade80);
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 4s ease infinite;
-            letter-spacing: 2px;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .divider {
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(90deg, #4ade80, #7ec8e3);
-            margin: 24px auto;
-            border-radius: 2px;
-            animation: expand 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes expand {
-            0% { width: 60px; opacity: 0.6; }
-            100% { width: 120px; opacity: 1; }
-        }
-
-        .intro {
-            font-size: clamp(1.2rem, 4vw, 1.8rem);
-            color: rgba(255, 255, 255, 0.85);
-            margin-top: 16px;
-            animation: fadeInUp 1s ease 0.5s both;
-        }
-
-        .intro .name {
-            color: #7ec8e3;
-            font-weight: 700;
-            position: relative;
-            display: inline-block;
-        }
-
-        .intro .name::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: #7ec8e3;
-            transform: scaleX(0);
-            animation: underlineGrow 1.5s ease 1.5s forwards;
-            transform-origin: left;
-        }
-
-        @keyframes underlineGrow {
-            to { transform: scaleX(1); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 3px;
-            height: 1.2em;
-            background: #7ec8e3;
-            margin-left: 4px;
-            vertical-align: middle;
-            animation: blink 1s step-end infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-
-        .footer {
-            position: fixed;
-            bottom: 12px;
-            right: 16px;
-            left: auto;
-            transform: none;
-            font-size: 0.6rem;
-            letter-spacing: 0.5px;
-            z-index: 10;
-            background: linear-gradient(90deg, rgba(74,222,128,0.1), rgba(229,231,235,0.35), rgba(126,200,227,0.6), rgba(74,222,128,0.1));
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 4s ease infinite, footerFade 3s ease-in-out infinite alternate;
-            filter: blur(0.15px);
-        }
-
-        @keyframes footerFade {
-            0% { opacity: 0.1; }
-            100% { opacity: 0.6; }
-        }
-
-        .footer a {
-            background: linear-gradient(90deg, rgba(74,222,128,0.1), rgba(229,231,235,0.35), rgba(126,200,227,0.6), rgba(74,222,128,0.1));
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 4s ease infinite;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        .float {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .deco-ring {
-            position: fixed;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .deco-ring.r1 {
-            width: 300px;
-            height: 300px;
-            top: -80px;
-            left: -80px;
-            animation: slowSpin 20s linear infinite;
-        }
-
-        .deco-ring.r2 {
-            width: 500px;
-            height: 500px;
-            bottom: -150px;
-            right: -120px;
-            animation: slowSpin 35s linear infinite reverse;
-        }
-
-        .deco-ring.r3 {
-            width: 200px;
-            height: 200px;
-            bottom: 60px;
-            left: 8%;
-            animation: slowSpin 15s linear infinite;
-        }
-
-        @keyframes slowSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .deco-dots {
-            position: fixed;
-            bottom: 22vh;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 12px;
-            z-index: 0;
-            opacity: 0.35;
-        }
-
-        .deco-dots span {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #4ade80, #7ec8e3);
-            animation: dotPulse 2s ease-in-out infinite;
-        }
-
-        .deco-dots span:nth-child(2) { animation-delay: 0.3s; }
-        .deco-dots span:nth-child(3) { animation-delay: 0.6s; }
-        .deco-dots span:nth-child(4) { animation-delay: 0.9s; }
-        .deco-dots span:nth-child(5) { animation-delay: 1.2s; }
-
-        @keyframes dotPulse {
-            0%, 100% { transform: scale(1); opacity: 0.4; }
-            50% { transform: scale(1.6); opacity: 1; }
-        }
-
-        .deco-line {
-            position: fixed;
-            width: 1px;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .deco-line.l1 {
-            left: 15%; top: 0; height: 40vh;
-            background: linear-gradient(to bottom, rgba(74,222,128,0), rgba(74,222,128,0.15) 30%, rgba(229,231,235,0.3) 60%, rgba(126,200,227,0.1) 85%, rgba(126,200,227,0));
-        }
-
-        .deco-line.l2 {
-            right: 18%; top: 30vh; height: 35vh;
-            background: linear-gradient(to bottom, rgba(126,200,227,0), rgba(126,200,227,0.2) 40%, rgba(74,222,128,0.25) 70%, rgba(74,222,128,0));
-        }
-
-        .deco-line.l3 {
-            left: 50%; bottom: 0; height: 25vh;
-            background: linear-gradient(to top, rgba(229,231,235,0), rgba(229,231,235,0.12) 40%, rgba(126,200,227,0.2) 75%, rgba(74,222,128,0));
-        }
-
-        .glow {
-            position: fixed;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(126, 200, 227, 0.08) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-            transform: translate(-50%, -50%);
-            transition: opacity 0.3s;
-        }
-
-        /* ===== 游戏入口按钮 ===== */
-        .game-btn-wrapper {
-            position: fixed;
-            bottom: 30vh;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            z-index: 10;
-        }
-
-        .game-btn {
-            position: relative;
-            display: inline-block;
-            padding: 14px 40px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-decoration: none;
-            border-radius: 50px;
-            cursor: pointer;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            box-shadow: 0 0 15px rgba(74, 222, 128, 0.2), 
-                        0 0 30px rgba(126, 200, 227, 0.2);
-            /* 用flex居中内容 */
-            text-align: center;
-        }
-
-        .game-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 50px;
-            padding: 2px;
-            background: linear-gradient(90deg, #4ade80, #7ec8e3, #4ade80);
-            background-size: 200% auto;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            animation: gradientShift 3s linear infinite;
-        }
-
-        .game-btn span {
-            position: relative;
-            z-index: 1;
-            background: linear-gradient(90deg, #4ade80, #7ec8e3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .game-btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 0 25px rgba(74, 222, 128, 0.4), 
-                        0 0 45px rgba(126, 200, 227, 0.4);
-        }
-
-        .game-btn:active {
-            transform: translateY(2px) scale(0.98);
-            box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
-        }
-
-        .game-btn-glow {
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-            animation: btnGlow 4s infinite;
-            z-index: 1;
-        }
-
-        @keyframes btnGlow {
-            0% { left: -100%; }
-            20% { left: 100%; }
-            100% { left: 100%; }
-        }
-
-        @media (max-width: 768px) {
-            .game-btn-wrapper {
-                bottom: 28vh;
-            }
-            .game-btn {
-                padding: 12px 32px;
-                font-size: 1rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>ATLAS // SDF</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="scanline"></div>
 
-    <div class="stars" id="stars"></div>
-
-    <div class="deco-ring r1"></div>
-    <div class="deco-ring r2"></div>
-    <div class="deco-ring r3"></div>
-
-    <div class="deco-line l1"></div>
-    <div class="deco-line l2"></div>
-    <div class="deco-line l3"></div>
-
-    <div class="glow" id="glow"></div>
-
-    <div class="container float">
-        <h1 class="hello">Hello World</h1>
-        <div class="divider"></div>
-        <p class="intro">
-            I'm <span class="name">YunXing</span><span class="cursor"></span>
-        </p>
+  <div class="card">
+    <!-- 顶部标识栏 -->
+    <div class="card-header">
+      <span class="brand">ATLAS // SDF</span>
+      <span class="status">
+        <span class="dot"></span> ONLINE
+      </span>
     </div>
 
-    <!-- 游戏按钮 -->
-    <div class="game-btn-wrapper">
-        <a href="https://yunxinga.github.io/YunXing/shooting_Game/shooting_Game.html" class="game-btn" target="_blank">
-            <div class="game-btn-glow"></div>
-            <span>🎮 进入射击游戏</span>
-        </a>
+    <!-- Logo 区域：带从左到右透明度渐变 -->
+    <div class="logo-wrap">
+      <div class="ring ring-outer"></div>
+      <div class="ring ring-inner"></div>
+      <img class="logo" src="Logo1.png" alt="Logo">
     </div>
 
-    <div class="deco-dots">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
+    <!-- 信息栏 -->
+    <div class="info">
+      <div class="row">
+        <span class="label">DESIGNATION</span>
+        <span class="value">OMEGA-07</span>
+      </div>
+      <div class="row">
+        <span class="label">CLEARANCE</span>
+        <span class="value">LEVEL 5 // COMMAND</span>
+      </div>
+      <div class="row">
+        <span class="label">STATUS</span>
+        <span class="value glow">AWAITING DIRECTIVE</span>
+      </div>
     </div>
 
-    <div class="footer">
-        VATE & Powered by <a href="https://pages.github.com">GitHub Pages</a>
-    </div>
+    <!-- 底部条形码 -->
+    <div class="barcode" id="barcode"></div>
+  </div>
 
-    <script>
-        const starsContainer = document.getElementById('stars');
-        const starCount = 80;
-
-        for (let i = 0; i < starCount; i++) {
-            const star = document.createElement('div');
-            star.classList.add('star');
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
-            star.style.animationDelay = Math.random() * 5 + 's';
-            starsContainer.appendChild(star);
-        }
-
-        const glow = document.getElementById('glow');
-        document.addEventListener('mousemove', (e) => {
-            glow.style.left = e.clientX + 'px';
-            glow.style.top = e.clientY + 'px';
-        });
-        document.addEventListener('mouseleave', () => {
-            glow.style.opacity = '0';
-        });
-        document.addEventListener('mouseenter', () => {
-            glow.style.opacity = '1';
-        });
-    </script>
+  <script>
+    // 生成条形码竖线
+    const bar = document.getElementById('barcode');
+    for (let i = 0; i < 40; i++) {
+      const line = document.createElement('div');
+      line.style.cssText = `
+        width:${Math.random() * 3 + 1}px;
+        height:100%;
+        background:rgba(0,255,200,${Math.random() * 0.5 + 0.3});
+        display:inline-block;
+        margin-right:${Math.random() * 3}px;
+      `;
+      bar.appendChild(line);
+    }
+  </script>
 </body>
 </html>
