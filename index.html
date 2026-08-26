@@ -2,107 +2,66 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>陨篂/YunXing的个人网址 · VATE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>陨篂/YunXing 个人主页</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- ================= 开场动画层 ================= -->
-  <div class="intro-layer" id="introLayer">
+  <!-- ============ 顶部信息栏（始终显示） ============ -->
+  <header class="topbar">
 
-    <!-- 中心 Logo -->
-    <div class="intro-logo" id="introLogo">
-      <img id="introLogoImg" src="Logo2.png" alt="Logo">
+    <!-- 左侧：VATE + //StarYC -->
+    <div class="topbar-left">
+      <span class="vate">VATE</span>
+      <span class="sub">//StarYC · ID-褐蝎 V1.0</span>
     </div>
 
-    <!-- 左侧淡红色斜梯形背景（2.5s 从左侧斜切入） -->
+    <!-- 中间：搜索框（仅框内有渐变） -->
+    <div class="search">
+      <input id="searchInput" type="text" maxlength="15" placeholder="Input">
+      <button id="searchBtn" title="搜索">
+        <svg viewBox="0 0 24 24" width="18" height="18">
+          <circle cx="10" cy="10" r="6.5" fill="none" stroke="#00ffc8" stroke-width="2"/>
+          <line x1="15" y1="15" x2="20.5" y2="20.5" stroke="#00ffc8" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 右侧：日期 + 在线状态 -->
+    <div class="topbar-right">
+      <span class="date" id="clock">----/--/-- --:--</span>
+      <span class="status">
+        <span class="dot"></span>
+        <span class="ok">ONLINE</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- ============ 下方显示区（动画在此播放） ============ -->
+  <main class="stage" id="stage">
+
+    <!-- 左侧淡红色背景楔形（细，喂红色区域少） -->
     <div class="red-wedge" id="redWedge"></div>
 
-    <!-- 右侧白色细斜梯形（2s后 0.7s 从右向左飞过） -->
-    <div class="white-slash" id="whiteSlash"></div>
+    <!-- 中间 Logo 显示区 -->
+    <div class="logo-area">
+      <img id="logoImg" src="Logo2.png" alt="Logo">
+    </div>
 
-    <!-- 右上角规律白色三角形阵列（白条飞过后渐显） -->
-    <div class="triangle-grid" id="triangleGrid"></div>
+    <!-- 从右向左飞过的白色细斜条（\ 方向） -->
+    <div class="white-streak" id="whiteStreak"></div>
 
-  </div>
+    <!-- 右上角 7 个错列大等腰三角形 -->
+    <div class="tri-group" id="triGroup"></div>
 
-  <!-- ================= 主 UI ================= -->
-  <div class="app" id="app">
+    <!-- 四个角标（仅下方显示区） -->
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
 
-    <!-- 顶部黑色标题框（淡红渐变 / 角标保留） -->
-    <header class="top-bar">
-
-      <!-- 左上角淡红色斜梯形背景（呼应开场，静态常驻） -->
-      <div class="top-red-wedge"></div>
-
-      <!-- 左侧：VATE 标识 + 角标 -->
-      <div class="top-left">
-        <span class="corner corner-tl"></span>
-        <span class="corner corner-bl"></span>
-        <div class="brand">
-          <span class="brand-name">VATE</span>
-          <span class="brand-sub">//StarYC · ID-褐蝎 V1.0</span>
-        </div>
-      </div>
-
-      <!-- 中间：搜索框 -->
-      <div class="search-box">
-        <span class="corner corner-tl"></span>
-        <span class="corner corner-tr"></span>
-        <span class="corner corner-bl"></span>
-        <span class="corner corner-br"></span>
-
-        <span class="search-icon" id="searchBtn" title="搜索">
-          <!-- 放大镜 SVG（颜色沿用 //SDF 主色） -->
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="10.5" cy="10.5" r="6.5"/>
-            <line x1="15.5" y1="15.5" x2="20" y2="20" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <input
-          type="text"
-          class="search-input"
-          id="searchInput"
-          maxlength="15"
-          placeholder="Input"
-          autocomplete="off"
-          spellcheck="false"
-        />
-        <span class="search-shine"></span>
-      </div>
-
-      <!-- 右侧：站点标题 + 在线状态 -->
-      <div class="top-right">
-        <span class="site-title">陨篂/YunXing的个人网址</span>
-        <span class="status">
-          <span class="status-dot"></span>
-          <span class="status-text">ONLINE</span>
-        </span>
-        <span class="corner corner-tr"></span>
-        <span class="corner corner-br"></span>
-      </div>
-
-    </header>
-
-    <!-- 主体内容区（黑金渐变 / 四角标红色） -->
-    <main class="content">
-      <span class="corner corner-tl"></span>
-      <span class="corner corner-tr"></span>
-      <span class="corner corner-bl"></span>
-      <span class="corner corner-br"></span>
-
-      <!-- 动态黑金渐变抛光层 -->
-      <div class="gold-polish"></div>
-
-      <div class="content-inner">
-        <div class="label">WELCOME</div>
-        <div class="title">VATE IDENTIFICATION SYSTEM</div>
-        <div class="subtitle">黑金 · 巨神协议已就绪</div>
-      </div>
-    </main>
-
-  </div>
+  </main>
 
   <script src="main.js"></script>
 </body>
